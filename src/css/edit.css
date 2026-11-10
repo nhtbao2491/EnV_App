@@ -1,0 +1,40 @@
+/* Xem trước khi thêm · hộp tạo bài · chế độ xem kết quả · đánh dấu "đang làm" */
+#pd,#ed{position:fixed;inset:0;background:rgba(43,40,36,.45);z-index:65;display:grid;place-items:center;padding:12px}
+#pd .gp,#ed .gp{width:min(720px,100%)}
+.pdl{display:grid;gap:6px;max-height:44vh;overflow:auto;padding:2px}
+.pdr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;align-items:center;padding:6px 8px;border:1px solid var(--line);border-radius:10px;background:#fbf8f1}
+.pdk{display:flex;gap:8px;align-items:center;min-width:0;cursor:pointer}
+.pdk .pdn{flex:1 1 auto;min-width:0;font-weight:600;overflow-wrap:anywhere}
+.pdd{grid-column:1/-1;display:grid;gap:3px;font-size:.88rem;color:var(--mute);padding:4px 4px 2px 26px;border-top:1px dashed var(--line)}
+.pdall{display:flex;gap:8px;align-items:center;font-weight:600;font-size:.92rem}
+#pdw{display:grid;gap:4px}
+.bdg.warn{background:#fdf0c9;color:#6b4a00}
+.bdg.cur{background:var(--acc);color:#fff}
+.edf{display:grid;gap:10px}
+.fi.fa{font:.95rem/1.5 ui-monospace,Consolas,"Segoe UI",monospace;resize:vertical;min-height:0}
+.edh{font-weight:400;font-size:.82rem}
+.edw{font-size:.9rem;min-height:1.2em;overflow-wrap:anywhere}
+.edw.bad{color:var(--dg);font-weight:700}.edw.ok{color:var(--acc)}
+.ib.dis,.lst .ib{min-width:34px}
+button:disabled{opacity:.45;cursor:default}
+
+/* ngăn kéo: thư mục & bài đang làm */
+.lst .fd.curf{border-color:var(--acc);color:var(--acc)}
+.lst .fr.has3{grid-template-columns:minmax(0,1fr) auto auto auto}
+.lst .rw.has4{grid-template-columns:auto minmax(0,1fr) auto auto auto}
+.lst .pk .bdg.cur{margin-left:auto}
+.lst .pk.on .tt::before{content:""}
+
+/* chế độ xem kết quả (đã kiểm tra): chỉ đọc, bấm "Chỉnh sửa" mới hiện ô làm bài */
+.rvbox{margin:0;padding:10px 12px;border-left:4px solid var(--acc);background:#f4faf7;border-radius:6px;color:#1f3a93;white-space:pre-wrap;line-height:1.65}
+.sq.rv .rva{align-items:flex-start}
+.rvt{flex:1;min-width:0;color:#1f3a93;font-weight:600;overflow-wrap:anywhere;padding:2px 4px}
+.rvt.mute{font-weight:400;font-style:italic}
+.xq.rv{border-left-color:var(--line)}
+.xq.rv.ok{border-left-color:var(--acc);background:#eef7f3}
+.xq.rv.part{border-left-color:#d69e2e;background:#fdf6e3}
+.xq.rv.no{border-left-color:var(--dg);background:#fdf0ee}
+.xq.rv .rva{display:flex;gap:6px;align-items:flex-start;margin-left:22px}
+.xq.rv .sf{margin-left:22px}
+@media (max-width:560px){.xq.rv .rva,.xq.rv .sf{margin-left:0}}
+#ssm,#xfm,#wmsg2{min-height:1.2em}

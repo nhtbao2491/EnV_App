@@ -1,0 +1,9 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "1. Cài thư viện (chỉ lần đầu)", "type": "shell", "command": "npm install", "problemMatcher": [] },
+    { "label": "2. Chạy app", "type": "shell", "command": "npm start", "problemMatcher": [],
+      "group": { "kind": "build", "isDefault": true } },
+    { "label": "3. Xem thử trên điện thoại / trình duyệt", "type": "shell", "command": "npm run serve", "problemMatcher": [] }
+  ]
+}

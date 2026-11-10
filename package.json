@@ -1,0 +1,79 @@
+{
+  "name": "listening-transcript",
+  "productName": "EnV",
+  "version": "1.2.0",
+  "description": "EnV — luyện nghe, viết, ghép câu tiếng Anh (.exe và web/PWA)",
+  "main": "electron/main.js",
+  "author": "Listening",
+  "license": "UNLICENSED",
+  "scripts": {
+    "postinstall": "node scripts/copy-vendor.js",
+    "start": "electron .",
+    "serve": "npx --yes http-server src -p 8080 -c-1",
+    "icons": "node scripts/check-icons.js",
+    "dist": "electron-builder --win nsis --x64 --publish never",
+    "dist:installer": "electron-builder --win nsis --x64 --publish never",
+    "dist:portable": "electron-builder --win portable --x64 --publish never",
+    "release": "electron-builder --win nsis --x64 --publish always"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9",
+    "msedge-tts": "*"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "jszip": "3.10.1",
+    "pdfjs-dist": "3.11.174"
+  },
+  "build": {
+    "appId": "com.listening.transcript",
+    "productName": "EnV",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "EnV-Portable-${version}.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "EnV",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "artifactName": "EnV-Setup-${version}.exe"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "releaseType": "release"
+      }
+    ]
+  },
+  "allowScripts": {
+    "electron@33.4.11": true
+  }
+}

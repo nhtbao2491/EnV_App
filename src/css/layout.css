@@ -1,0 +1,22 @@
+/* Responsive: một cột trung tâm ở mọi cỡ màn hình; panel danh sách luôn là lớp phủ. */
+.top{display:none}
+@media (pointer:coarse){
+  button,select,input[type=file]{min-height:44px}
+  input[type=range]{min-height:32px}
+  .line{padding:12px 10px}
+}
+@media (max-width:560px){
+  .bar-in{padding:8px 12px}
+  .brand h1{font-size:1rem}
+  .brand img{display:none}
+  #ro .lb,#dataBtn .lb{display:none}
+  main{padding:14px 12px 40px;gap:12px}
+  section{padding:14px}
+  .cards{grid-template-columns:1fr}
+  .spk{grid-template-columns:1fr 1fr}.spk .v{grid-column:1/-1}
+  .line{grid-template-columns:1fr;gap:0}
+  #out{max-height:55vh}
+  .row>button{flex:1 1 auto}
+}
+@media (min-width:1100px){main,.bar-in{max-width:920px}#out{max-height:68vh}}
+@media print{#rd,#rb,#gd,#sd,#dd,.bar{display:none!important}}

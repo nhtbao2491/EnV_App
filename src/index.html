@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'self'; media-src 'self' blob:">
+<meta name="theme-color" content="#0f766e">
+<title>EnV — Nghe · Viết · Ghép câu</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/data.css">
+<link rel="stylesheet" href="css/practice.css">
+<link rel="stylesheet" href="css/edit.css">
+</head>
+<body>
+
+<header class="bar"><div class="bar-in">
+<div class="brand"><img src="assets/icon-192.png" alt="" width="32" height="32"><h1>EnV</h1></div>
+<div class="acts"><button id="ro" class="p" aria-haspopup="dialog">📚 <span class="lb">Bài nghe</span> <span id="rc"></span></button><button id="wo" class="p" aria-haspopup="dialog" hidden>✍ <span class="lb">Bài viết</span> <span id="wc"></span></button><button id="so" class="p" aria-haspopup="dialog" hidden><span id="sic">🧩</span> <span class="lb" id="slb">Ráp từ</span> <span id="sc"></span><span id="xc" hidden></span></button><button id="dataBtn" aria-haspopup="dialog">⚙ <span class="lb">Dữ liệu</span></button></div>
+</div>
+<div class="bar-tabs"><nav class="tabs" id="tabs" role="tablist" aria-label="Chọn chế độ luyện">
+<button id="tab-l" role="tab" class="on" aria-selected="true">🎧 Nghe</button><button id="tab-w" role="tab" aria-selected="false">✍ Viết</button><button id="tab-s" role="tab" aria-selected="false">🧩 Ghép câu</button>
+</nav></div></header>
+<main id="pg-l">
+
+<section>
+<b>Cách dùng</b>
+<p class="mute" style="margin:4px 0 12px">Bài nghe mẫu (độc thoại và hội thoại) đã có sẵn trong 📚 Bài nghe — mở danh sách là nghe được ngay. Muốn thêm bài riêng: dán transcript vào ô bên dưới rồi bấm “＋ Thêm bài nghe”, hoặc tải file .docx / .pdf chứa nhiều bài (app hiện bản xem trước để bạn kiểm tra trước khi thêm).</p>
+<div class="up"><input type="file" id="rf" accept=".docx,.pdf" multiple aria-label="Chọn file bài đọc"></div>
+<p class="mute" id="rmsg" role="status" style="margin:8px 0 0"></p>
+<div class="row"><button id="gopen" hidden>📚 Mở danh sách bài nghe</button></div>
+<details class="fx"><summary>Prompt nhờ AI tạo file bài nghe</summary>
+<textarea id="gP2" readonly rows="12" aria-label="Prompt tạo file bài đọc"></textarea>
+<div class="row"><button id="gc2">Sao chép prompt</button></div>
+<p class="mute" id="fmsg" role="status" style="margin:6px 0 0"></p>
+</details>
+</section>
+
+
+<section>
+<label for="txt"><b>Transcript</b></label>
+<textarea id="txt" spellcheck="false" placeholder="Dán transcript vào đây...&#10;&#10;Độc thoại: dán đoạn văn bình thường.&#10;Hội thoại: mỗi dòng dạng  Tên: lời thoại"></textarea>
+<div class="row"><button class="p" id="build">Tạo bài nghe</button><button id="addb">＋ Thêm bài nghe</button></div>
+<p class="mute" id="amsg" role="status" style="margin:8px 0 0"></p>
+<p class="mute" id="bmsg" style="margin:8px 0 0">Hội thoại: mỗi dòng dạng <code>Tên: lời thoại</code>. Không có tên người nói thì tự tách câu và đọc bằng một giọng.</p>
+</section>
+
+<section id="player" hidden>
+<div id="spks"></div>
+<div class="row"><button id="shuf">🎲 Ngẫu nhiên giọng</button><label>Nguồn giọng <select id="vf" aria-label="Lọc giọng đọc"><option value="all">Tất cả giọng tiếng Anh</option></select></label></div>
+<div class="row">
+<button class="p" id="play">▶ Phát</button>
+<button id="stop">■ Dừng</button>
+<button id="prev" aria-label="Câu trước">⏮</button>
+<button id="next" aria-label="Câu sau">⏭</button>
+<label>Tốc độ <input type="range" id="rate" min="0.5" max="1.5" step="0.05" value="0.9"> <span id="rv">0.90×</span></label>
+</div>
+<div class="row">
+<label>Nghỉ giữa câu <input type="range" id="gap" min="0" max="2000" step="100" value="400"> <span id="gv">0.4s</span></label>
+<label><input type="checkbox" id="rep"> Lặp lại câu</label>
+<label><input type="checkbox" id="hid"> Ẩn transcript (nghe trước)</label>
+</div>
+<p class="mute" id="msg" style="margin:8px 0 0"></p>
+</section>
+
+<section id="outsec" hidden>
+<div id="out" role="list"></div>
+</section>
+</main>
+
+<main id="pg-w" hidden>
+<section>
+<b>Luyện viết — dịch Việt → Anh</b>
+<p class="mute" style="margin:4px 0 12px">100 bài viết mẫu (A1 → B1, có đáp án) đã có sẵn trong 📚 danh sách — mở ra là làm được ngay. Đọc tiếng Việt và từ gợi ý, gõ bản tiếng Anh rồi bấm “Kiểm tra đáp án”; sau khi kiểm tra, bài chuyển sang chế độ xem kết quả — muốn sửa thì bấm “Chỉnh sửa bài làm”. Muốn thêm bài riêng: tạo bằng tay hoặc tải file (có bản xem trước trước khi thêm).</p>
+<div class="up"><input type="file" id="wf" accept=".docx,.pdf,.txt" multiple aria-label="Chọn file bài viết"></div>
+<p class="mute" id="wmsg" role="status" style="margin:8px 0 0"></p>
+<div class="row"><button id="wnew" class="p">＋ Tạo bài viết mới</button><button id="wopen" hidden>📚 Mở danh sách bài viết</button><a class="btn" href="assets/mau-khung-bai-viet.docx" download>⬇ Tải file Word mẫu (.docx)</a></div>
+<details class="fx"><summary>Prompt nhờ AI tạo file bài viết</summary>
+<textarea id="wP" readonly rows="14" aria-label="Prompt tạo file bài viết"></textarea>
+<div class="row"><button id="wcp">Sao chép prompt</button></div>
+<p class="mute" id="wfm" role="status" style="margin:6px 0 0"></p>
+</details>
+</section>
+<section id="wlesson" class="paper" hidden>
+<div class="pnav"><button id="wprev">⏮ Bài trước</button><span id="wpos" class="mute"></span><button id="wnext">Bài sau ⏭</button></div>
+<h2 id="wtitle" class="pt"></h2>
+<p id="wlv" class="plv"></p>
+<p class="pl">Tiếng Việt:</p>
+<div id="wvi" class="pb"></div>
+<p class="wk" id="whint"></p>
+<p class="pl">Tiếng Anh:</p>
+<textarea id="wans" class="ruled" rows="8" spellcheck="false" placeholder="Gõ bản dịch tiếng Anh của bạn ở đây..." aria-label="Bài làm tiếng Anh"></textarea>
+<div id="wrev" class="pb rvbox" hidden></div>
+<p class="mute" id="wnokey" hidden>Bài này chưa có phần “Tiếng Anh” trong file nên không chấm điểm được.</p>
+<div class="row"><button id="wgrade" class="p">✔ Kiểm tra đáp án</button><button id="wedit" class="p" hidden>✎ Chỉnh sửa bài làm</button><button id="wsave">💾 Lưu bài làm</button><button id="wmark"></button><button id="wreset">↺ Làm lại</button></div>
+<p class="mute" id="wmsg2" role="status" style="margin:6px 0 0"></p>
+<div id="wres" class="wres" role="status" hidden></div>
+<details id="wkeyb" class="fx" hidden><summary>Bài này chưa có đáp án — dán đáp án / bản AI đã sửa để chấm</summary>
+<textarea id="wkeyt" rows="5" spellcheck="false" aria-label="Dán đáp án tiếng Anh"></textarea>
+<div class="row"><button id="wkeyok" class="p">Áp dụng đáp án</button></div></details>
+</section>
+</main>
+
+<main id="pg-s" hidden>
+<div class="seg" role="tablist" aria-label="Chọn loại ghép câu"><button id="m1" role="tab" class="on" aria-selected="true">① Ráp từ thành câu</button><button id="m2" role="tab" aria-selected="false">② Viết câu từ gợi ý</button></div>
+<section id="sintro">
+<b>Loại 1 · Ráp từ — xếp các từ thành câu tiếng Anh</b>
+<p class="mute" style="margin:4px 0 12px">Bộ “1500 mẫu câu thông dụng” (5 chủ đề, 50 unit, có đáp án) đã có sẵn trong 📚 danh sách — mở ra là làm được ngay. Mỗi câu có câu tiếng Việt và các từ tiếng Anh đã xáo trộn: bấm vào từng từ để đưa xuống dòng làm bài (hoặc tự gõ), rồi bấm “Kiểm tra đáp án”. Muốn thêm bài riêng: tạo bằng tay hoặc tải file (có bản xem trước trước khi thêm).</p>
+<div class="row"><button id="snew" class="p">＋ Tạo unit ráp từ mới</button><button id="sopen">📚 Mở danh sách bài ghép câu</button></div>
+<div class="up" style="margin-top:12px"><input type="file" id="sf" accept=".xlsx,.docx,.pdf,.txt" multiple aria-label="Chọn file bài ghép câu"></div>
+<p class="mute" id="smsg" role="status" style="margin:8px 0 0"></p>
+<details class="fx"><summary>Prompt nhờ AI tạo file ráp từ</summary>
+<textarea id="sP" readonly rows="14" aria-label="Prompt tạo file ghép câu"></textarea>
+<div class="row"><button id="scp">Sao chép prompt</button></div>
+<p class="mute" id="sfm" role="status" style="margin:6px 0 0"></p>
+</details>
+</section>
+<section id="xintro" hidden>
+<b>Loại 2 · Viết câu — từ tiếng Việt sang tiếng Anh</b>
+<p class="mute" style="margin:4px 0 12px">Bộ 1.500 câu phản xạ (A1 → B2, có đáp án) đã có sẵn trong 📚 danh sách — mở ra là viết được ngay. Mỗi câu có câu tiếng Việt và vài gợi ý; bạn viết câu tiếng Anh vào dòng “→”, bấm “Kiểm tra đáp án” để chấm. Muốn thêm bài riêng: tạo bằng tay hoặc tải file (có bản xem trước trước khi thêm).</p>
+<div class="row"><button id="xnew" class="p">＋ Tạo unit viết câu mới</button><button id="xopen">📚 Mở danh sách bài viết câu</button></div>
+<div class="up" style="margin-top:12px"><input type="file" id="xf" accept=".xlsx,.docx,.pdf,.txt" multiple aria-label="Chọn file bài viết câu"></div>
+<p class="mute" id="xmsg" role="status" style="margin:8px 0 0"></p>
+<details class="fx"><summary>Prompt nhờ AI tạo file bài viết câu</summary>
+<textarea id="xP" readonly rows="14" aria-label="Prompt tạo file viết câu"></textarea>
+<div class="row"><button id="xcp2">Sao chép prompt</button></div>
+<p class="mute" id="xfm2" role="status" style="margin:6px 0 0"></p>
+</details>
+</section>
+<section id="sunit" class="sheet" hidden>
+<div class="pnav"><button id="sprev">⏮ Unit trước</button><span id="spos" class="mute"></span><button id="snext">Unit sau ⏭</button></div>
+<p class="mute stp" id="sutopic"></p>
+<h2 id="sutitle" class="sut"></h2>
+<p class="sins" id="sins">Ráp lại các từ để tạo thành câu tiếng Anh hoàn chỉnh, đúng nghĩa với câu tiếng Việt cho sẵn. Nhớ viết hoa chữ đầu câu và thêm dấu câu.</p>
+<div id="slist"></div>
+<p class="mute" id="snokey" hidden>Unit này chưa kèm đáp án nên app chưa chấm tự động. Làm xong bấm “Hoàn tất & xem lại” để xem lại bài làm.</p>
+<div class="row"><button id="sgrade" class="p">✔ Kiểm tra đáp án</button><button id="sedit" class="p" hidden>✎ Chỉnh sửa bài làm</button><button id="ssave">💾 Lưu bài làm</button><button id="smark"></button><button id="sreset">↺ Làm lại unit</button><span class="mute" id="sprog"></span></div>
+<p class="mute" id="ssm" role="status" style="margin:0"></p>
+<div id="sres" class="wres" role="status" hidden></div>
+</section>
+<section id="xunit" class="sheet" hidden>
+<div class="pnav"><button id="xprev">⏮ Unit trước</button><span id="xpos" class="mute"></span><button id="xnext">Unit sau ⏭</button></div>
+<p class="mute stp xtp" id="xutopic"></p>
+<h2 id="xutitle" class="sut"></h2>
+<p class="sins" id="xins">Viết câu tiếng Anh tương ứng với từng câu tiếng Việt, dùng các từ gợi ý bên dưới. Viết xong bấm “Kiểm tra đáp án” để xem lại bài.</p>
+<div class="row" style="margin-top:0"><button id="xhint">🙈 Ẩn gợi ý</button></div>
+<div id="xlist"></div>
+<div id="xres" class="wres" role="status" hidden></div>
+<div class="row"><button id="xcheck" class="p">✔ Kiểm tra đáp án</button><button id="xedit" class="p" hidden>✎ Chỉnh sửa bài làm</button><button id="xsave">💾 Lưu bài làm</button><button id="xmark"></button><button id="xcopy">📋 Sao chép nhờ AI sửa</button><button id="xreset">↺ Làm lại unit</button><span class="mute" id="xprog"></span></div>
+<p class="mute" id="xfm" role="status" style="margin:0"></p>
+<details id="xkeyb" class="fx" hidden><summary>Có đáp án / bản AI đã sửa? Dán vào đây để chấm</summary>
+<p class="mute" style="margin:6px 0">Mỗi câu một dòng theo số thứ tự, ví dụ: <code>1. I come from Vietnam.</code></p>
+<textarea id="xkeyt" rows="6" spellcheck="false" aria-label="Dán đáp án"></textarea>
+<div class="row"><button id="xkeyok" class="p">Áp dụng đáp án</button><button id="xkeyclr">Xóa đáp án đã dán</button></div></details>
+<textarea id="xcp" class="vh" readonly tabindex="-1" aria-hidden="true"></textarea>
+</section>
+</main>
+<div id="ad" hidden><div class="gp" role="dialog" aria-modal="true" aria-labelledby="adt">
+<div class="hd"><b id="adt">Xem trước &amp; thêm bài nghe</b><button id="adx" aria-label="Đóng">✕</button></div>
+<div class="pv"><div class="pvm" id="pvm"></div><div id="pvt"></div></div>
+<label class="fl">Tên bài nghe<input id="at" class="fi" placeholder="Tên bài nghe"></label>
+<label class="fl">Lưu vào thư mục<select id="af" class="fi"></select></label>
+<input id="anf" class="fi" placeholder="Tên thư mục mới" aria-label="Tên thư mục mới" hidden>
+<div class="row" style="margin:0"><button class="p" id="asv">✓ Xác nhận thêm</button><button id="acx">Hủy</button></div>
+</div></div>
+<div id="pd" hidden><div class="gp" role="dialog" aria-modal="true" aria-labelledby="pdt">
+<div class="hd"><b id="pdt">Xem trước trước khi thêm</b><button id="pdx" aria-label="Đóng">✕</button></div>
+<p class="mute" id="pdsum" style="margin:0"></p>
+<div id="pdw"></div>
+<label class="pdall"><input type="checkbox" id="pdall" checked> Chọn tất cả</label>
+<div id="pdl" class="pdl"></div>
+<label class="fl">Lưu vào<select id="pdto" class="fi"></select></label>
+<input id="pdnm" class="fi" placeholder="Tên thư mục mới" aria-label="Tên thư mục mới" hidden>
+<div class="row" style="margin:0"><button class="p" id="pdok">✓ Thêm vào danh sách</button><button id="pdcx">Hủy</button></div>
+</div></div>
+<div id="ed" hidden><div class="gp" role="dialog" aria-modal="true" aria-labelledby="edt">
+<div class="hd"><b id="edt">Tạo bài mới</b><button id="edx" aria-label="Đóng">✕</button></div>
+<div id="edf" class="edf"></div>
+<div id="edw" class="edw"></div>
+<label class="fl" id="edtl">Lưu vào thư mục<select id="edto" class="fi"></select></label>
+<input id="ednm" class="fi" placeholder="Tên thư mục mới" aria-label="Tên thư mục mới" hidden>
+<div class="row" style="margin:0"><button class="p" id="edok">✓ Tạo bài</button><button id="edcx">Hủy</button></div>
+</div></div>
+<div id="upd" role="status" hidden><span id="updt"></span><button id="updb" class="p" hidden>Khởi động lại ngay</button></div>
+<div id="rb" class="drb" hidden></div>
+<aside id="rd" class="l drw" role="dialog" aria-label="Danh sách bài nghe" hidden>
+<div class="hd"><b>Danh sách bài nghe</b><span><button id="rn">📁＋ Thư mục</button> <button id="rx" aria-label="Đóng">✕</button></span></div>
+<input type="search" id="rq" placeholder="Tìm bài nghe..." aria-label="Tìm bài nghe">
+<p class="mute" id="rsum" style="margin:0"></p>
+<div id="rl" class="lst"></div>
+</aside>
+
+<div id="dd" hidden><div class="gp" role="dialog" aria-modal="true" aria-labelledby="ddt">
+<div class="hd"><b id="ddt">Dữ liệu đã lưu trên thiết bị</b><button id="ddx" aria-label="Đóng">✕</button></div>
+<p class="mute" style="margin:0">Bài nghe, thư mục và cài đặt tự động lưu mỗi khi bạn tải file hoặc thêm bài mới. Dữ liệu chỉ nằm trên máy này.</p>
+<div id="ddinfo"></div>
+<div class="row" style="margin:0">
+<button id="ddexp">⬇ Xuất sao lưu (.json)</button>
+<label class="file"><input type="file" id="ddimp" accept=".json,application/json">⬆ Nhập sao lưu</label>
+<label class="mute"><input type="checkbox" id="ddrep"> Thay thế toàn bộ (không gộp)</label>
+</div>
+<div class="row" style="margin:0"><button id="ddupd" hidden>🔄 Kiểm tra cập nhật</button><span class="mute" id="ddver"></span></div>
+<div class="row" style="margin:0"><button id="ddmove" hidden>📁 Đổi nơi lưu (ổ D…)</button><button id="ddopen" hidden>📂 Mở thư mục dữ liệu</button><button id="ddclr">🗑 Xóa toàn bộ dữ liệu</button></div>
+<p class="mute" id="ddmsg" role="status" style="margin:0"></p>
+</div></div>
+
+<script src="js/storage.js"></script>
+<script src="js/player.js"></script>
+<script src="js/reader.js"></script>
+<script src="js/library.js"></script>
+<script src="js/guides.js"></script>
+<script src="js/parsers.js"></script>
+<script src="js/lib2.js"></script>
+<script src="js/import.js"></script>
+<script src="js/writing.js"></script>
+<script src="js/builtin.js"></script>
+<script src="js/builtin2.js"></script>
+<script src="js/builtin3.js"></script>
+<script src="js/sentences.js"></script>
+<script src="js/phanxa.js"></script>
+<script src="js/tabs.js"></script>
+<script src="js/data.js"></script>
+<script src="js/updater.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
